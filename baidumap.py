@@ -1,5 +1,11 @@
-# coding=utf-8
+# coding=gbk
 import math,random
+from time import strftime
+import os
+from PIL import Image
+
+
+
 def getBlockNum(num, level):
     mercator =int((num / math.pow(2, -(level - 18))) / 256)
     return int(math.ceil(mercator))
@@ -12,10 +18,10 @@ def makeImg(x,y,level,fileURL,type=""):
     testFileURL(fileURL)
     fileURL = "%s/%s"%(fileURL, x)
     testFileURL(fileURL)
-    #ã€€ç”Ÿæˆå›¾ç‰‡è·¯å¾„
+    #¡¡Éú³ÉÍ¼Æ¬Â·¾¶
     fileURL = "%s/%s.png"%(fileURL, y)#fileURL + "/" + y + ".png"
     if (os.path.exists(fileURL)):
-        print ("å›¾ç‰‡å·²å­˜åœ¨ï¼š%s"% fileURL)
+        print ("Í¼Æ¬ÒÑ´æÔÚ£º%s"% fileURL)
         return
     else:
         server = random.randint(0,3)
@@ -25,9 +31,9 @@ def makeImg(x,y,level,fileURL,type=""):
             url = "http://shangetu{}.map.bdimg.com/it/u=x={};y={};z={};v=009;type=sate&fm=46".format(server,x,y,level)
         download(url, fileURL)
         if os.path.exists(fileURL):
-            print ("ä¸‹è½½å®Œæˆï¼š%s" % url)
+            print ("ÏÂÔØÍê³É£º%s" % url)
         else:
-            print ("!!\tä¸‹è½½å¤±è´¥ï¼š%s" % url)
+            print ("!!\tÏÂÔØÊ§°Ü£º%s" % url)
 
 
 import urllib2,urllib
@@ -61,26 +67,58 @@ def getImgToDownload(p, startLevel, endLevel, fileURL, type="") :
 import os
 def checkFolder(fileURL):
     if os.path.exists(fileURL):
-        print("æ–‡ä»¶å¤¹å­˜åœ¨")
+        print("ÎÄ¼ş¼Ğ´æÔÚ")
     else:
         os.mkdir(fileURL)
-        print("åˆ›å»ºæ–‡ä»¶å¤¹ï¼š%s" % fileURL)
+        print("´´½¨ÎÄ¼ş¼Ğ£º%s" % fileURL)
 
 
 
 def testFileURL(url):
     if not os.path.isdir(url):
         os.mkdir(url)
-        print("åˆ›å»ºæ–‡ä»¶å¤¹ï¼š%s" % url)
+        print("´´½¨ÎÄ¼ş¼Ğ£º%s" % url)
 
 if __name__ == '__main__':
     # p = (12575735.07, 2557788.85, 12697886.49, 2728067.86)
     # p = (12608670.712133333, 2641485.312542373, 12620795.3716, 2656817.638654661)
     # getImgToDownload(p,19,19,"./gz")
-
+    
     # 98505, 98599
     # 20636, 20756
-
-    for x in range(98532, 98600):
-        for y in range(20636, 20757):
+    
+    print("ÇëÊäÈë×óÉÏ½Ç£¬ÓÒÏÂ½Ç×ø±ê£¬ÒÔ¿Õ¸ñ·Ö¿ª£¨ÀıÈç£º98440 20660 98467 20633£©¡£\nÇëÈ·±£x1<x2£¬y1>y2£º")
+    strs = raw_input()    
+    nums = strs.split()    
+    x1,y1,x2,y2 = map(int,nums)
+    
+    #x1,y1,x2,y2 = 98467,20660,98467,20633
+    x2+=1;y2-=1
+    # x1,y1,x2,y2 = 98461,20657,98467,20536
+    # x1,y1,x2,y2 = 98461,20657,98467,20536
+    cnt = 0
+    for x in range(x1, x2):
+        for y in range(y1, y2,-1):
             makeImg(x,y,19,"./gz")
+            cnt+=1
+    print "ÏÂÔØÍê³É£¬¹²ÓĞ%d¸öÍ¼ÏñĞèÒªºÏ²¢¡£"%cnt
+    
+    picName = strftime("%Y%m%d%H%M%S") + ".png"
+
+    #creates a new empty image, RGB mode
+    new_im = Image.new('RGB',(abs(x2 - x1) *256,abs(y2 - y1)*256))
+    # new_im = Image.new('RGB',(256*2,(y2 - y1)*256))
+    path = './gz/19'
+
+    for x in xrange(x1,x2):
+        for y in xrange(y1,y2,-1):
+            url = "%s/%s/%s.png"%(path,x,y)
+            # print url
+            im = Image.open(url)
+            print "%sÒÑºÏ²¢"%url
+            new_im.paste(im,((x-x1)*256,(y1 - y)*256))
+
+    with open(picName,'wb') as p:
+        new_im.save(p)
+
+    print 'ºÏ²¢Íê³É£¬Í¼Æ¬ÎÄ¼şÎ»ÓÚ£º%s' % os.path.abspath(picName)
