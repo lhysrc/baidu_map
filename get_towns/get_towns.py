@@ -4,14 +4,14 @@ import time
 
 
 counties = []
-with open("d:/counties.txt") as f:
+with open("./counties2.txt") as f:
     for l in f.readlines():
         counties.append(l[0:6])
 # print(counties[0:100])
 
 base_uri = 'https://lsp.wuliu.taobao.com/locationservice/addr/output_address_town_array.do?l1={}&l2={}&l3={}'
 
-with open("d:/towns.txt", "a+") as f:
+with open("./towns2.txt", "a+") as f:
     for i, c in enumerate(counties):
         print("%d: %s start!" % (i, c))
 
